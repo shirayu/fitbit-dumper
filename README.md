@@ -1,6 +1,9 @@
 
 # Fitbit dumper
 
+[![CircleCI](https://circleci.com/gh/shirayu/fitbit-dumper.svg?style=svg)](https://circleci.com/gh/shirayu/fitbit-dumper)
+[![Apache License](http://img.shields.io/badge/license-APACHE2-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+
 ## Install
 
 ```sh
