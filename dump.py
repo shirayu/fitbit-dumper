@@ -10,10 +10,11 @@ import json
 import sys
 import codecs
 import gzip
+import time
 import fitbit
 
 
-def get_data(cfg, date):
+def get_data(cfg, date, sleep):
     '''
     Get data and print
     '''
@@ -33,6 +34,7 @@ def get_data(cfg, date):
     # https://dev.fitbit.com/docs/activity/#get-activity-intraday-time-series
     keys = ["heart", "calories", "steps", "distance", "floors", "elevation"]
     for key in keys:
+        time.sleep(sleep)
         data[key] = client.intraday_time_series(
             'activities/' + key,
             base_date=date,
@@ -50,6 +52,7 @@ def main():
     oparser.add_argument("-c", "--config", dest="config", default=None, required=True)
     oparser.add_argument("-o", "--output", dest="output", default="-")
     oparser.add_argument("-z", "--gzip", dest="gzip", default=False, action="store_true")
+    oparser.add_argument("-s", "--sleep", dest="sleep", default=1.0, type=float)
     opts = oparser.parse_args()
 
     cfg = None
@@ -65,7 +68,7 @@ def main():
     else:
         outf = codecs.open(opts.output, "w", "utf8")
 
-    data = get_data(cfg, opts.date)
+    data = get_data(cfg, opts.date, opts.sleep)
     json.dump(data, outf, ensure_ascii=False)
     outf.write("\n")
     outf.close()
