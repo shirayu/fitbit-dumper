@@ -18,10 +18,14 @@ Get access tokens by using ``python-fitbit/gather_keys_oauth2.py``.
 
 ```sh
 cp config.template.json config.json
+chmod 600 config.json
 
 # Set tokens
 vi config.json
 ```
+
+The configuration file will be overwrite, when the access token is expired.
+So, the program should be write permission to the file.
 
 ## Sample
 

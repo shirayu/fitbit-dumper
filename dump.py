@@ -14,15 +14,30 @@ import time
 import fitbit
 
 
-def get_data(cfg, date, sleep):
+def get_data(cfgname, date, sleep):
     '''
     Get data and print
     '''
 
-    client = fitbit.Fitbit(cfg["CLIENT_ID"],
-                           cfg["CLIENT_SECRET"],
-                           access_token=cfg["ACCESS_TOKEN"],
-                           refresh_token=cfg["REFRESH_TOKEN"])
+    def update_token(token):
+        '''
+        Write token
+        '''
+        token["client_id"] = cfg["client_id"]
+        token["client_secret"] = cfg["client_secret"]
+        with open(cfgname, 'w') as fhdl:
+            json.dump(token, fhdl, ensure_ascii=False, sort_keys=True, indent=4)
+
+    cfg = None
+    with open(cfgname) as fhdl:
+        cfg = json.loads(fhdl.read())
+
+    client = fitbit.Fitbit(cfg["client_id"],
+                           cfg["client_secret"],
+                           access_token=cfg["access_token"],
+                           refresh_token=cfg["refresh_token"],
+                           expires_at=cfg["expires_at"],
+                           refresh_cb=update_token)
     data = {}
 
     # https://python-fitbit.readthedocs.io/en/latest/
@@ -55,10 +70,6 @@ def main():
     oparser.add_argument("-s", "--sleep", dest="sleep", default=1.0, type=float)
     opts = oparser.parse_args()
 
-    cfg = None
-    with open(opts.config) as fhdl:
-        cfg = json.loads(fhdl.read())
-
     outf = None
     if opts.output == "-":
         outf = sys.stdout
@@ -68,7 +79,7 @@ def main():
     else:
         outf = codecs.open(opts.output, "w", "utf8")
 
-    data = get_data(cfg, opts.date, opts.sleep)
+    data = get_data(opts.config, opts.date, opts.sleep)
     json.dump(data, outf, ensure_ascii=False)
     outf.write("\n")
     outf.close()
