@@ -7,7 +7,6 @@
 ## Install
 
 ```sh
-sudo pip2 install fitbit
 sudo pip3 install fitbit
 ```
 

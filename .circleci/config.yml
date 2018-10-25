@@ -2,26 +2,36 @@ version: 2
 jobs:
   build:
     docker:
-        - image: python:3.6
-          environment:
-              PYCACHE_DIR: /pycache
-    working_directory: /app
+        - image: circleci/python:3.7
+    working_directory: ~/app
     steps:
         - checkout
 
         - restore_cache:
-            key: cache-{{ .Branch }}
+            keys:
+                - cache-{{ checksum "setup.py" }}
+
         - run:
             name: python module install
             command: |
-                mkdir -p ${PYCACHE_DIR}
-                XDG_CACHE_HOME=${PYCACHE_DIR} pip install pylint
+                python3 -m venv venv
+                . venv/bin/activate
+                pip3 install --process-dependency-links -U -e .\[tests\]
+
         - save_cache:
-            key: cache-{{ .Branch }}
+            key: cache-{{ checksum "setup.py" }}
             paths:
-                - "${PYCACHE_DIR}"
+                - ./venv
 
         - run:
             name: Lint
             command: |
-                pylint --py3k *.py
+                . venv/bin/activate
+                find . -maxdepth 1 | grep '\.py$' | xargs flake8
+                find . -maxdepth 1 | grep '\.py$' | xargs autopep8 -d | diff /dev/null -
+
+        - run:
+            name: Test Python codes
+            command: |
+                . venv/bin/activate
+                python3 -m unittest discover .
