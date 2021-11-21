@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "market_watcher"
+version = "0.1.0"
+description = ""
+authors = ["Yuta Hayashibe <yuta@hayashibe.jp>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fitbit = "^0.3.1"
+
+[tool.poetry.dev-dependencies]
+coverage = ">=5.3"
+flake8 = ">=3.8.4"
+isort = ">=5.9.3"
+yamllint = ">=1.25.0"
+pydocstyle = ">=5.1.1"
+black = "^21.10b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+pythonVersion = "3.9"
+typeCheckingMode = "basic"
+exclude = ["**/third", ".venv", "**/node_modules", "**/__pycache__",]
+reportPrivateImportUsage = "information"
+reportUnusedVariable="warning"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+line_length = 120
